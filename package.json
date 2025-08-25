@@ -8,7 +8,7 @@
     "build": "vite build",
     "preview": "vite preview",
     "predeploy": "vite build && shx cp dist/index.html dist/404.html",
-    "deploy": "gh-pages -d dist"
+    "deploy": "gh-pages -b master -d dist"
   },
   "dependencies": {
     "react": "^19.1.1",
