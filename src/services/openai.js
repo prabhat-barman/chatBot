@@ -27,6 +27,8 @@ export async function askOpenAI({
 
   const data = await res.json();
   // new API often provides a convenience text field:
-  const text = data.output_text ?? data.content?.[0]?.text ?? "";
+  const text = data.output?.[0]?.content?.[0]?.text ?? data.content?.[0]?.text ?? "";
+  console.log(text);
+  
   return text;
 }
