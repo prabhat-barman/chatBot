@@ -1,34 +1,28 @@
-
-
+// src/services/openai.js
 export async function askOpenAI({
   apiKey,
   model,
   messages,
-  baseUrl = import.meta.env.VITE_OPENAI_BASE_URL || "https://api.openai.com/v1"
+  baseUrl = import.meta.env.VITE_OPENAI_BASE_URL || "https://api.openai.com/v1",
 }) {
-  // you can call the unified Responses API with 'input' as text/history,
-  // or use classic chat.completions. Here's a simple Responses API call:
-  const res = await fetch(`${baseUrl}/responses`, {
+  if (!apiKey) throw new Error("Missing API key");
+
+  const res = await fetch(`${baseUrl}/chat/completions`, {
     method: "POST",
     headers: {
       "Content-Type": "application/json",
-      Authorization: `Bearer ${apiKey}`
+      Authorization: `Bearer ${apiKey}`,
     },
     body: JSON.stringify({
       model: model || import.meta.env.VITE_DEFAULT_MODEL || "gpt-4o-mini",
-      input: messages.map(m => `${m.role.toUpperCase()}: ${m.content}`).join("\n\n")
-    })
+      messages: messages.map(m => ({ role: m.role, content: m.content })),
+      temperature: 0.7,
+    }),
   });
 
-  if (!res.ok) {
-    const err = await res.text();
-    throw new Error(err || `HTTP ${res.status}`);
-  }
+  if (!res.ok) throw new Error(await res.text().catch(() => `HTTP ${res.status}`));
 
   const data = await res.json();
-  // new API often provides a convenience text field:
-  const text = data.output?.[0]?.content?.[0]?.text ?? data.content?.[0]?.text ?? "";
-  console.log(text);
-  
+  const text = data?.choices?.[0]?.message?.content || "";
   return text;
 }

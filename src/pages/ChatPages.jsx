@@ -88,23 +88,22 @@ export default function ChatPage() {
 
 function MessageBubble({ role, text }) {
   const isUser = role === "user";
+  const clean = text.replace(/^\s*(assistant:)?\s*/i, ""); // just in case
+
   return (
     <div className={`flex ${isUser ? "justify-end" : "justify-start"}`}>
-      <div
-        className={[
-          "max-w-[85%] rounded-2xl px-3 py-2 text-sm shadow-sm",
-          isUser
-            ? "bg-indigo-600 text-white rounded-br-sm"
-            : "bg-white border text-slate-800 rounded-bl-sm"
-        ].join(" ")}
-      >
+      <div className={[
+        "max-w-[85%] rounded-2xl px-3 py-2 text-sm shadow-sm",
+        isUser ? "bg-indigo-600 text-white rounded-br-sm" : "bg-white border text-slate-800 rounded-bl-sm"
+      ].join(" ")}>
         {!isUser && <div className="mb-1 text-[10px] uppercase tracking-wider text-slate-500">assistant</div>}
         {isUser && <div className="sr-only">you</div>}
-        <div className="whitespace-pre-wrap leading-relaxed">{text}</div>
+        <div className="whitespace-pre-wrap leading-relaxed">{clean}</div>
       </div>
     </div>
   );
 }
+
 
 function AssistantThinking() {
   return (
